@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard · Tienda escolar</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Public+Sans:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f3f5f9;--card:#fff;--ink:#16203a;--mute:#5d6882;--line:#e1e6ef;--head:#16203a;--onhead:#fff;--hi:#1e9e5a;--mid:#d99a0b;--lo:#d64545;--sun:#e8a317;--rain:#3b82c4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1524;--card:#18203a;--ink:#e8ecf6;--mute:#9aa6c2;--line:#2a3555;--head:#0a0f1c;--hi:#3ec27d;--mid:#f0b429;--lo:#ef6b6b;--sun:#f0b429;--rain:#5ca3e6}}
+:root[data-theme="dark"]{--bg:#0f1524;--card:#18203a;--ink:#e8ecf6;--mute:#9aa6c2;--line:#2a3555;--head:#0a0f1c;--hi:#3ec27d;--mid:#f0b429;--lo:#ef6b6b;--sun:#f0b429;--rain:#5ca3e6}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 "Public Sans",system-ui,sans-serif}
+.wrap{max-width:1280px;margin:0 auto;padding:16px}
+h1,h2,.big{font-family:"Bricolage Grotesque","Public Sans",system-ui,sans-serif}
+header{background:var(--head);color:var(--onhead);border-radius:14px;padding:20px 24px;display:grid;gap:16px}
+header h1{font-size:26px;font-weight:700;letter-spacing:-.01em}
+header p{color:#b9c3dc;font-size:13px}
+.ctl{display:flex;flex-wrap:wrap;gap:16px 22px;align-items:end}
+.ctl label{display:block;font-size:12px;color:#b9c3dc;margin-bottom:4px}
+select{padding:7px 10px;border-radius:8px;border:1px solid #3a4770;background:#222c4d;color:#fff;font:inherit;min-width:130px}
+.seg{display:flex;border:1px solid #3a4770;border-radius:8px;overflow:hidden}
+.seg button{background:transparent;color:#d5dcf0;border:0;padding:7px 14px;font:inherit;cursor:pointer}
+.seg button[aria-pressed="true"]{background:#fff;color:#16203a;font-weight:600}
+input[type=range]{width:150px;accent-color:#fff}
+.rg b{color:#fff;font-weight:600}
+button.reset{background:transparent;border:1px solid #3a4770;color:#d5dcf0;border-radius:8px;padding:7px 12px;font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid #7aa7ff;outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:14px 2px 4px;font-size:13px;color:var(--mute)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;font-weight:600;font-size:12px;border:1px solid}
+.chip.alto{color:var(--hi);border-color:var(--hi);background:color-mix(in srgb,var(--hi) 14%,transparent)}
+.chip.medio{color:var(--mid);border-color:var(--mid);background:color-mix(in srgb,var(--mid) 16%,transparent)}
+.chip.bajo{color:var(--lo);border-color:var(--lo);background:color-mix(in srgb,var(--lo) 14%,transparent)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:12px 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.k small{color:var(--mute);font-size:13px}
+.big{font-size:30px;font-weight:700;line-height:1.15;margin-top:2px}
+.sub{color:var(--mute);font-size:12px;margin-top:4px}
+.grid{display:grid;gap:14px;margin-bottom:14px}
+.g2{grid-template-columns:1.6fr 1fr}
+.g2b{grid-template-columns:1.2fr 1fr}
+@media(max-width:860px){.g2,.g2b{grid-template-columns:1fr}.wrap{padding:10px}}
+h2{font-size:16px;font-weight:700;margin-bottom:2px}
+.note{color:var(--mute);font-size:12px;margin-bottom:12px}
+.cv{position:relative;height:270px}
+.hm{width:100%;border-collapse:separate;border-spacing:6px;font-size:13px}
+.hm th{font-weight:600;color:var(--mute);font-size:12px;text-align:center}
+.hm th:first-child{text-align:left}
+.hm td.c{text-align:center;padding:10px 4px;border-radius:8px;border-left:4px solid;font-weight:600}
+.hm td.c small{display:block;font-weight:400;color:var(--mute);font-size:11px}
+.hm td.alto{border-color:var(--hi);background:color-mix(in srgb,var(--hi) 20%,var(--card))}
+.hm td.medio{border-color:var(--mid);background:color-mix(in srgb,var(--mid) 22%,var(--card))}
+.hm td.bajo{border-color:var(--lo);background:color-mix(in srgb,var(--lo) 20%,var(--card))}
+.hm td.off{background:transparent;border:1px dashed var(--line);color:var(--mute);font-weight:400}
+.hm td.r{font-weight:600;padding-right:6px}
+.tw{overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th{text-align:left;padding:9px 12px;border-bottom:2px solid var(--line);color:var(--mute);font-size:12px;cursor:pointer;white-space:nowrap;user-select:none}
+table.t th:hover{color:var(--ink)}
+table.t td{padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.t td.n,table.t th.n{text-align:right}
+table.t tr.alto td:first-child{box-shadow:inset 4px 0 var(--hi)}
+table.t tr.medio td:first-child{box-shadow:inset 4px 0 var(--mid)}
+table.t tr.bajo td:first-child{box-shadow:inset 4px 0 var(--lo)}
+table.t tfoot td{font-weight:600;border-top:2px solid var(--line);border-bottom:0}
+.empty{padding:26px;text-align:center;color:var(--mute)}
+footer{color:var(--mute);font-size:12px;margin:6px 2px 14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div><h1>Tienda escolar · Panel de ventas</h1>
+ <p>Datos originales de ventas_tienda_escolar.csv sin modificar. El ingreso (unidades × precio) es el único valor calculado.</p></div>
+ <div class="ctl">
+  <div><label for="fd">Día</label><select id="fd"></select></div>
+  <div><label for="fc">Clima</label><select id="fc"></select></div>
+  <div><label for="fp">Producto</label><select id="fp"></select></div>
+  <div><label>Clasificar según</label><div class="seg" role="group" aria-label="Métrica de clasificación"><button id="mi" aria-pressed="true">Ingreso</button><button id="mu" aria-pressed="false">Unidades</button></div></div>
+  <div class="rg"><label for="pl">Umbral bajo: percentil <b id="plv"></b></label><input type="range" id="pl" min="5" max="60" value="33"></div>
+  <div class="rg"><label for="ph">Umbral alto: percentil <b id="phv"></b></label><input type="range" id="ph" min="40" max="95" value="67"></div>
+  <button class="reset" id="rs">Restablecer</button>
+ </div>
+</header>
+<div class="legend" id="lg"></div>
+<section class="kpis">
+ <div class="card k"><small>Ingresos totales</small><div class="big" id="k1"></div><div class="sub" id="k1s"></div></div>
+ <div class="card k"><small>Unidades vendidas</small><div class="big" id="k2"></div><div class="sub" id="k2s"></div></div>
+ <div class="card k"><small>Producto líder (por ingresos)</small><div class="big" id="k3"></div><div class="sub" id="k3s"></div></div>
+ <div class="card k"><small>Registros por clasificación</small><div id="k4" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div><div class="sub" id="k4s"></div></div>
+</section>
+<section class="grid g2">
+ <div class="card"><h2 id="t1"></h2><p class="note">Cada color es un producto; los colores semáforo se reservan para la clasificación.</p><div class="cv"><canvas id="c1" role="img" aria-label="Ventas por día y producto"></canvas></div></div>
+ <div class="card"><h2>Distribución por clasificación</h2><p class="note">Cantidad de registros en cada nivel.</p><div class="cv"><canvas id="c2" role="img" aria-label="Registros por clasificación"></canvas></div></div>
+</section>
+<section class="grid g2b">
+ <div class="card"><h2>Mapa de calor: día × producto</h2><p class="note" id="hn"></p><div class="tw"><table class="hm" id="hm"></table></div></div>
+ <div class="card"><h2>Soleado vs. lluvioso</h2><p class="note">Promedio por registro y producto.</p><div class="cv"><canvas id="c3" role="img" aria-label="Comparación por clima"></canvas></div></div>
+</section>
+<section class="card"><h2>Detalle de registros</h2><p class="note">Haz clic en un encabezado para ordenar. La franja de color indica la clasificación.</p><div class="tw" id="tb"></div></section>
+<footer>Clasificación dinámica: los umbrales se calculan sobre los 20 registros completos, por lo que no cambian al filtrar.</footer>
+</div>
+<script>
+const DATA=[{"Dia": "Lunes", "Clima": "Soleado", "Producto": "Empanada", "Unidades_vendidas": 30, "Precio_unitario_COP": 2500}, {"Dia": "Lunes", "Clima": "Soleado", "Producto": "Jugo", "Unidades_vendidas": 35, "Precio_unitario_COP": 2000}, {"Dia": "Lunes", "Clima": "Soleado", "Producto": "Galletas", "Unidades_vendidas": 42, "Precio_unitario_COP": 1500}, {"Dia": "Lunes", "Clima": "Soleado", "Producto": "Vaso de fruta", "Unidades_vendidas": 15, "Precio_unitario_COP": 3000}, {"Dia": "Martes", "Clima": "Lluvioso", "Producto": "Empanada", "Unidades_vendidas": 38, "Precio_unitario_COP": 2500}, {"Dia": "Martes", "Clima": "Lluvioso", "Producto": "Jugo", "Unidades_vendidas": 18, "Precio_unitario_COP": 2000}, {"Dia": "Martes", "Clima": "Lluvioso", "Producto": "Galletas", "Unidades_vendidas": 45, "Precio_unitario_COP": 1500}, {"Dia": "Martes", "Clima": "Lluvioso", "Producto": "Vaso de fruta", "Unidades_vendidas": 8, "Precio_unitario_COP": 3000}, {"Dia": "Miércoles", "Clima": "Soleado", "Producto": "Empanada", "Unidades_vendidas": 32, "Precio_unitario_COP": 2500}, {"Dia": "Miércoles", "Clima": "Soleado", "Producto": "Jugo", "Unidades_vendidas": 33, "Precio_unitario_COP": 2000}, {"Dia": "Miércoles", "Clima": "Soleado", "Producto": "Galletas", "Unidades_vendidas": 40, "Precio_unitario_COP": 1500}, {"Dia": "Miércoles", "Clima": "Soleado", "Producto": "Vaso de fruta", "Unidades_vendidas": 14, "Precio_unitario_COP": 3000}, {"Dia": "Jueves", "Clima": "Lluvioso", "Producto": "Empanada", "Unidades_vendidas": 40, "Precio_unitario_COP": 2500}, {"Dia": "Jueves", "Clima": "Lluvioso", "Producto": "Jugo", "Unidades_vendidas": 20, "Precio_unitario_COP": 2000}, {"Dia": "Jueves", "Clima": "Lluvioso", "Producto": "Galletas", "Unidades_vendidas": 48, "Precio_unitario_COP": 1500}, {"Dia": "Jueves", "Clima": "Lluvioso", "Producto": "Vaso de fruta", "Unidades_vendidas": 10, "Precio_unitario_COP": 3000}, {"Dia": "Viernes", "Clima": "Soleado", "Producto": "Empanada", "Unidades_vendidas": 45, "Precio_unitario_COP": 2500}, {"Dia": "Viernes", "Clima": "Soleado", "Producto": "Jugo", "Unidades_vendidas": 40, "Precio_unitario_COP": 2000}, {"Dia": "Viernes", "Clima": "Soleado", "Producto": "Galletas", "Unidades_vendidas": 35, "Precio_unitario_COP": 1500}, {"Dia": "Viernes", "Clima": "Soleado", "Producto": "Vaso de fruta", "Unidades_vendidas": 18, "Precio_unitario_COP": 3000}];
+const DIAS=[...new Set(DATA.map(r=>r.Dia))],PRODS=[...new Set(DATA.map(r=>r.Producto))],CLIMAS=[...new Set(DATA.map(r=>r.Clima))];
+const PC={"Empanada":"#4b5bd6","Jugo":"#0e9aa7","Galletas":"#8e5bb5","Vaso de fruta":"#c2559f"};
+const CL={alto:{t:"Alto",i:"▲",v:"--hi"},medio:{t:"Medio",i:"●",v:"--mid"},bajo:{t:"Bajo",i:"▼",v:"--lo"}};
+const S={dia:"all",clima:"all",prod:"all",m:"ing",pl:33,ph:67,sk:"orig",dir:1};
+const $=id=>document.getElementById(id),css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt=n=>Math.round(n).toLocaleString("es-CO"),cur=n=>"$"+fmt(n);
+const ing=r=>r.Unidades_vendidas*r.Precio_unitario_COP;
+const val=r=>S.m==="ing"?ing(r):r.Unidades_vendidas;
+const fm=v=>S.m==="ing"?cur(v):fmt(v)+" u.";
+const mname=()=>S.m==="ing"?"Ingreso (COP)":"Unidades vendidas";
+function pct(a,p){const s=[...a].sort((x,y)=>x-y),i=(s.length-1)*p/100,l=Math.floor(i);return s[l]+(s[Math.min(l+1,s.length-1)]-s[l])*(i-l)}
+let LO=0,HI=0;
+function thr(){const v=DATA.map(val);LO=pct(v,S.pl);HI=pct(v,S.ph)}
+const cls=v=>v>=HI?"alto":(v<LO?"bajo":"medio");
+const flt=()=>DATA.filter(r=>(S.dia==="all"||r.Dia===S.dia)&&(S.clima==="all"||r.Clima===S.clima)&&(S.prod==="all"||r.Producto===S.prod));
+const chip=c=>`<span class="chip ${c}">${CL[c].i} ${CL[c].t}</span>`;
+function fill(id,vals,all){$(id).innerHTML=`<option value="all">${all}</option>`+vals.map(v=>`<option>${v}</option>`).join("")}
+fill("fd",DIAS,"Todos los días");fill("fc",CLIMAS,"Todos los climas");fill("fp",PRODS,"Todos los productos");
+let CH={};
+function theme(){Chart.defaults.color=css("--mute");Chart.defaults.font.family='"Public Sans",system-ui,sans-serif';Chart.defaults.borderColor=css("--line")}
+function mk(){Object.values(CH).forEach(c=>c.destroy());theme();
+ CH.c1=new Chart($("c1"),{type:"bar",data:{labels:DIAS,datasets:PRODS.map(p=>({label:p,data:[],backgroundColor:PC[p],borderRadius:3}))},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{usePointStyle:true}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fm(c.parsed.y)}`}}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,beginAtZero:true,ticks:{callback:v=>S.m==="ing"?"$"+(v/1000)+"k":v}}}}});
+ CH.c2=new Chart($("c2"),{type:"doughnut",data:{labels:["Alto","Medio","Bajo"],datasets:[{data:[],backgroundColor:[css("--hi"),css("--mid"),css("--lo")],borderColor:css("--card"),borderWidth:3}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:"58%",plugins:{legend:{position:"bottom",labels:{usePointStyle:true}},tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed} registros`}}}}});
+ CH.c3=new Chart($("c3"),{type:"bar",data:{labels:PRODS,datasets:CLIMAS.map(cl=>({label:cl,data:[],backgroundColor:cl==="Soleado"?css("--sun"):css("--rain"),borderRadius:3}))},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{usePointStyle:true}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y==null?"sin datos":fm(c.parsed.y)}`}}},scales:{x:{grid:{display:false}},y:{beginAtZero:true}}}});
+}
+function render(){
+ thr();const d=flt();
+ $("plv").textContent=S.pl;$("phv").textContent=S.ph;
+ const u=S.m==="ing"?"$":"",un=S.m==="ing"?"":" u.";
+ const f=n=>u+fmt(n)+un;
+ $("lg").innerHTML=`<span>Clasificación por <b>${mname()}</b> en cada registro:</span>${chip("alto")} ≥ ${f(HI)} ${chip("medio")} ${f(LO)} a menos de ${f(HI)} ${chip("bajo")} menos de ${f(LO)}`;
+ const tI=d.reduce((a,r)=>a+ing(r),0),tU=d.reduce((a,r)=>a+r.Unidades_vendidas,0);
+ $("k1").textContent=cur(tI);$("k1s").textContent=`${d.length} de ${DATA.length} registros`;
+ $("k2").textContent=fmt(tU);$("k2s").textContent=d.length?`Promedio ${(tU/d.length).toFixed(1).replace(".",",")} por registro`:"Sin registros";
+ const bp={};d.forEach(r=>bp[r.Producto]=(bp[r.Producto]||0)+ing(r));
+ const top=Object.entries(bp).sort((a,b)=>b[1]-a[1])[0];
+ $("k3").textContent=top?top[0]:"—";$("k3s").textContent=top?`${cur(top[1])} · ${(top[1]/tI*100).toFixed(1).replace(".",",")}% del total`:"Sin registros";
+ const n={alto:0,medio:0,bajo:0};d.forEach(r=>n[cls(val(r))]++);
+ $("k4").innerHTML=["alto","medio","bajo"].map(c=>`<span class="chip ${c}">${CL[c].i} ${n[c]} ${CL[c].t.toLowerCase()}</span>`).join("");
+ $("k4s").textContent=`Según ${mname().toLowerCase()}`;
+ $("t1").textContent=`${S.m==="ing"?"Ingresos":"Unidades"} por día y producto`;
+ CH.c1.data.datasets.forEach((ds,i)=>ds.data=DIAS.map(di=>d.filter(r=>r.Dia===di&&r.Producto===PRODS[i]).reduce((a,r)=>a+val(r),0)));
+ CH.c2.data.datasets[0].data=[n.alto,n.medio,n.bajo];
+ CH.c3.data.datasets.forEach((ds,i)=>ds.data=PRODS.map(p=>{const x=d.filter(r=>r.Producto===p&&r.Clima===CLIMAS[i]);return x.length?x.reduce((a,r)=>a+val(r),0)/x.length:null}));
+ Object.values(CH).forEach(c=>c.update("none"));
+ $("hn").textContent=`Cada celda es un registro (${mname().toLowerCase()}). Las celdas punteadas quedan fuera del filtro.`;
+ let h="<tr><th>Día</th>"+PRODS.map(p=>`<th>${p}</th>`).join("")+"</tr>";
+ DIAS.forEach(di=>{h+=`<tr><td class="r">${di}</td>`;PRODS.forEach(p=>{
+  const r=DATA.find(x=>x.Dia===di&&x.Producto===p),on=r&&d.includes(r);
+  h+=on?`<td class="c ${cls(val(r))}">${fm(val(r))}<small>${r.Clima}</small></td>`:`<td class="c off">—</td>`});h+="</tr>"});
+ $("hm").innerHTML=h;
+ const cols=[["orig","Día"],["cl","Clima"],["pr","Producto"],["un","Unidades vendidas","n"],["pu","Precio unitario (COP)","n"],["ig","Ingreso calculado (COP)","n"],["cs","Clasificación"]];
+ const key={orig:r=>DIAS.indexOf(r.Dia),cl:r=>r.Clima,pr:r=>r.Producto,un:r=>r.Unidades_vendidas,pu:r=>r.Precio_unitario_COP,ig:ing,cs:r=>val(r)};
+ const rows=d.map((r,i)=>({r,i})).sort((a,b)=>{const x=key[S.sk](a.r),y=key[S.sk](b.r);return ((x>y)-(x<y))*S.dir||a.i-b.i});
+ $("tb").innerHTML=d.length?`<table class="t"><thead><tr>${cols.map(c=>`<th class="${c[2]||""}" data-k="${c[0]}">${c[1]}${S.sk===c[0]?(S.dir>0?" ▲":" ▼"):""}</th>`).join("")}</tr></thead><tbody>`+
+  rows.map(({r})=>{const c=cls(val(r));return `<tr class="${c}"><td>${r.Dia}</td><td>${r.Clima}</td><td>${r.Producto}</td><td class="n">${r.Unidades_vendidas}</td><td class="n">${cur(r.Precio_unitario_COP)}</td><td class="n">${cur(ing(r))}</td><td>${chip(c)}</td></tr>`}).join("")+
+  `</tbody><tfoot><tr><td colspan="3">Total (${d.length} registros)</td><td class="n">${fmt(tU)}</td><td></td><td class="n">${cur(tI)}</td><td></td></tr></tfoot></table>`:`<div class="empty">No hay registros para esta combinación de filtros. Prueba con otro día o clima.</div>`;
+ document.querySelectorAll("th[data-k]").forEach(th=>th.onclick=()=>{const k=th.dataset.k;S.dir=S.sk===k?-S.dir:1;S.sk=k;render()});
+}
+$("fd").onchange=e=>{S.dia=e.target.value;render()};$("fc").onchange=e=>{S.clima=e.target.value;render()};$("fp").onchange=e=>{S.prod=e.target.value;render()};
+function setM(m){S.m=m;$("mi").setAttribute("aria-pressed",m==="ing");$("mu").setAttribute("aria-pressed",m==="u");render()}
+$("mi").onclick=()=>setM("ing");$("mu").onclick=()=>setM("u");
+$("pl").oninput=e=>{S.pl=+e.target.value;if(S.pl>=S.ph){S.ph=S.pl+5;$("ph").value=S.ph}render()};
+$("ph").oninput=e=>{S.ph=+e.target.value;if(S.ph<=S.pl){S.pl=S.ph-5;$("pl").value=S.pl}render()};
+$("rs").onclick=()=>{Object.assign(S,{dia:"all",clima:"all",prod:"all",m:"ing",pl:33,ph:67,sk:"orig",dir:1});["fd","fc","fp"].forEach(i=>$(i).value="all");$("pl").value=33;$("ph").value=67;setM("ing")};
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{mk();render()});
+mk();render();
+</script>
+</body>
+</html>
